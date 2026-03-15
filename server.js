@@ -1,80 +1,89 @@
-// Required core modules
+// importing required modules
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
 
-// Function to read and send html files
-function sendHtmlFile(response, fileLocation, status = 200) {
-  fs.readFile(fileLocation, "utf8", function (error, fileData) {
-    if (error) {
-      response.writeHead(500, { "Content-Type": "text/plain" });
-      response.end("Something went wrong");
-    } else {
-      response.writeHead(status, { "Content-Type": "text/html" });
-      response.end(fileData);
+// helper function to load and send html files
+function sendHtmlFile(res, filePath, statusCode = 200) {
+
+  fs.readFile(filePath, "utf8", function(err, data) {
+
+    if (err) {
+      // if file cannot be read
+      res.writeHead(500, { "Content-Type": "text/plain" });
+      res.end("Server error while loading page");
+      return;
     }
+
+    res.writeHead(statusCode, { "Content-Type": "text/html" });
+    res.end(data);
   });
+
 }
 
-// Creating server
-const server = http.createServer(function (request, response) {
-  let requestedUrl = request.url;
+// create http server
+const server = http.createServer(function(req, res) {
 
-  // Handling css file
-  if (requestedUrl === "/style.css") {
-    const cssPath = path.join(__dirname, "public", "style.css");
+  const url = req.url;
 
-    fs.readFile(cssPath, function (error, cssData) {
-      if (error) {
-        response.writeHead(500);
-        response.end("CSS file not found");
-      } else {
-        response.writeHead(200, { "Content-Type": "text/css" });
-        response.end(cssData);
+  // serving css file
+  if (url === "/style.css") {
+
+    const cssFile = path.join(__dirname, "public", "style.css");
+
+    fs.readFile(cssFile, function(err, data) {
+
+      if (err) {
+        res.writeHead(500);
+        res.end("Unable to load CSS");
+        return;
       }
+
+      res.writeHead(200, { "Content-Type": "text/css" });
+      res.end(data);
+
     });
+
   }
 
-  // Home page
-  else if (requestedUrl === "/" || requestedUrl === "/home") {
-    sendHtmlFile(
-      response,
-      path.join(__dirname, "pages", "home.html"),
-      200
-    );
+  // home route
+  else if (url === "/" || url === "/home") {
+
+    const homePath = path.join(__dirname, "pages", "home.html");
+    sendHtmlFile(res, homePath, 200);
+
   }
 
-  // About page
-  else if (requestedUrl === "/about") {
-    sendHtmlFile(
-      response,
-      path.join(__dirname, "pages", "about.html"),
-      200
-    );
+  // about route
+  else if (url === "/about") {
+
+    const aboutPath = path.join(__dirname, "pages", "about.html");
+    sendHtmlFile(res, aboutPath, 200);
+
   }
 
-  // Contact page
-  else if (requestedUrl === "/contact") {
-    sendHtmlFile(
-      response,
-      path.join(__dirname, "pages", "contact.html"),
-      200
-    );
+  // contact route
+  else if (url === "/contact") {
+
+    const contactPath = path.join(__dirname, "pages", "contact.html");
+    sendHtmlFile(res, contactPath, 200);
+
   }
 
-  // Page not found
+  // if route does not exist
   else {
-    sendHtmlFile(
-      response,
-      path.join(__dirname, "pages", "404.html"),
-      404
-    );
+
+    const notFoundPath = path.join(__dirname, "pages", "404.html");
+    sendHtmlFile(res, notFoundPath, 404);
+
   }
+
 });
 
-// Server port
+// server port
 const PORT = 3000;
 
-server.listen(PORT, function () {
-  console.log("Server is running at http://localhost:" + PORT);
+// start server
+server.listen(PORT, function() {
+  console.log("Server running at http://localhost:" + PORT);
 });
