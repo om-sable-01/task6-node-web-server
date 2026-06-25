@@ -11,20 +11,14 @@ This project is a simple web server built using Node.js and the HTTP module.
 - Custom 404 error page
 - Basic CSS styling
 
-## How to Run
-1. Install Node.js
-2. Run the server using:
-   node server.js
-3. Open browser and visit:
-   https://task6-nodejs.netlify.app
-
 ## Description
 This project demonstrates basic routing and serving static HTML files using Node.js.
 
 ## 📸 Screenshots
 
 ### Home Page
-![Home Page](screenshots/home.png)
+<img width="1263" height="743" alt="home" src="https://github.com/user-attachments/assets/5abc9836-e86c-4719-91fd-bd34161014a6" />
+
 
 ### About Page
 ![About Page](screenshots/about.png)
