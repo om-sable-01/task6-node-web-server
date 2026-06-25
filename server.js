@@ -1,89 +1,64 @@
-// importing required modules
-const http = require("http");
-const fs = require("fs");
-const path = require("path");
+var http = require("http");
+var fs = require("fs");
+var path = require("path");
 
-// helper function to load and send html files
-function sendHtmlFile(res, filePath, statusCode = 200) {
+var PORT = 3000; // change this if 3000 is busy on ur machine
 
-  fs.readFile(filePath, "utf8", function(err, data) {
+// tried using express first but decided to just use http module directly
+// kept it simple for now
 
-    if (err) {
-      // if file cannot be read
-      res.writeHead(500, { "Content-Type": "text/plain" });
-      res.end("Server error while loading page");
-      return;
+var server = http.createServer(function(req, res) {
+
+    var url = req.url;
+    console.log("got request -> " + url);
+
+    // css file handle karna padega warna styling nahi aayegi
+    if (url == "/style.css") {
+        var cssPath = path.join(__dirname, "public", "style.css");
+        fs.readFile(cssPath, function(err, data) {
+            if (err) {
+                res.writeHead(404);
+                res.end("css not found, check public folder");
+                return;
+            }
+            res.writeHead(200, { "Content-Type": "text/css" });
+            res.end(data);
+        });
+        return;
     }
 
-    res.writeHead(statusCode, { "Content-Type": "text/html" });
-    res.end(data);
-  });
+    // now handle the actual pages
+    var filePath = "";
+    var statusCode = 200;
 
-}
+    if (url == "/" || url == "/home") {
+        filePath = path.join(__dirname, "pages", "home.html");
+    } else if (url == "/about") {
+        filePath = path.join(__dirname, "pages", "about.html");
+    } else if (url == "/contact") {
+        filePath = path.join(__dirname, "pages", "contact.html");
+    } else {
+        // nothing matched so 404 page
+        filePath = path.join(__dirname, "pages", "404.html");
+        statusCode = 404;
+    }
 
-// create http server
-const server = http.createServer(function(req, res) {
-
-  const url = req.url;
-
-  // serving css file
-  if (url === "/style.css") {
-
-    const cssFile = path.join(__dirname, "public", "style.css");
-
-    fs.readFile(cssFile, function(err, data) {
-
-      if (err) {
-        res.writeHead(500);
-        res.end("Unable to load CSS");
-        return;
-      }
-
-      res.writeHead(200, { "Content-Type": "text/css" });
-      res.end(data);
-
+    // read the html file and send it
+    fs.readFile(filePath, function(err, data) {
+        if (err) {
+            // this happens if html file is missing from pages folder
+            console.log("file missing: " + filePath);
+            res.writeHead(500, { "Content-Type": "text/plain" });
+            res.end("500 - something went wrong on server side");
+            return;
+        }
+        res.writeHead(statusCode, { "Content-Type": "text/html" });
+        res.end(data);
     });
-
-  }
-
-  // home route
-  else if (url === "/" || url === "/home") {
-
-    const homePath = path.join(__dirname, "pages", "home.html");
-    sendHtmlFile(res, homePath, 200);
-
-  }
-
-  // about route
-  else if (url === "/about") {
-
-    const aboutPath = path.join(__dirname, "pages", "about.html");
-    sendHtmlFile(res, aboutPath, 200);
-
-  }
-
-  // contact route
-  else if (url === "/contact") {
-
-    const contactPath = path.join(__dirname, "pages", "contact.html");
-    sendHtmlFile(res, contactPath, 200);
-
-  }
-
-  // if route does not exist
-  else {
-
-    const notFoundPath = path.join(__dirname, "pages", "404.html");
-    sendHtmlFile(res, notFoundPath, 404);
-
-  }
 
 });
 
-// server port
-const PORT = 3000;
-
-// start server
 server.listen(PORT, function() {
-  console.log("Server running at http://localhost:" + PORT);
+    console.log("server running on http://localhost:" + PORT);
+    console.log("press ctrl+c to stop");
 });
