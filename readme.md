@@ -21,10 +21,13 @@ This project demonstrates basic routing and serving static HTML files using Node
 
 
 ### About Page
-![About Page](screenshots/about.png)
+<img width="1239" height="750" alt="about" src="https://github.com/user-attachments/assets/69b24548-f82e-471c-9537-421962b56909" />
+
 
 ### Contact Page
-![Contact Page](screenshots/contact.png)
+<img width="1460" height="900" alt="contact" src="https://github.com/user-attachments/assets/6679c546-bbca-47b4-93a1-3d23be04751d" />
+
 
 ### 404 Page
-![404 Page](screenshots/404.png)
+<img width="1305" height="801" alt="404" src="https://github.com/user-attachments/assets/06c64df3-1cdc-46e6-bbe9-dd54c642eb63" />
+
